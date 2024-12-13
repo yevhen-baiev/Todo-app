@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/indent */
+/* eslint-disable prettier/prettier */
 import { useContext } from 'react';
 import { TodoItem } from '../TodoItem';
-import { TodosContext } from '../TodosContext/TodosContext';
+import { TodosContext } from '../TodoContext/TodoContext';
 import { Status } from '../../types/Status';
 
 export const TodoList: React.FC = () => {
@@ -11,17 +11,19 @@ export const TodoList: React.FC = () => {
     filterStatus === Status.All
       ? todos
       : todos.filter(todo => {
-          switch (filterStatus) {
-            case Status.Active:
-              return !todo.completed;
+        switch (filterStatus) {
+          case Status.Active:
 
-            case Status.Completed:
-              return todo.completed;
+            return !todo.completed;
 
-            default:
-              return true;
-          }
-        });
+          case Status.Completed:
+
+            return todo.completed;
+
+          default:
+            return true;
+        }
+      });
 
   return (
     <section className="todoapp__main" data-cy="TodoList">

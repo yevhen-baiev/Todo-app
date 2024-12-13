@@ -1,17 +1,18 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
-import { TodosContext } from '../TodosContext/TodosContext';
+import { TodosContext } from '../TodoContext/TodoContext';
 import { ErrorTypes } from '../../types/ErrorTypes';
 
 export const TodoHeader: React.FC = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
-  const { isDisabled, todos, addTodo, setError, updateTodo } =
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { isDisabled, todos, addTodo, setError, updateTodo, setIsDisabled } =
     useContext(TodosContext);
 
   const active = todos.filter(el => !el.completed);
 
   const hendlerToggleAll = () => {
+    setIsDisabled(true);
     const arrOfTodos = active.length ? active : todos;
     const checkedArr = arrOfTodos.map(el => ({
       ...el,
@@ -21,6 +22,8 @@ export const TodoHeader: React.FC = () => {
     checkedArr.forEach(todo => {
       updateTodo(todo);
     });
+
+    setIsDisabled(false);
   };
 
   const handleAddTodo = (e: React.FormEvent) => {
@@ -35,7 +38,9 @@ export const TodoHeader: React.FC = () => {
       return;
     }
 
-    addTodo(trimmedTitle).then(() => setTitle(''));
+    addTodo(trimmedTitle)
+      .then(() => setTitle(''))
+      .catch(() => setError(ErrorTypes.Add));
   };
 
   useEffect(() => {

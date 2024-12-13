@@ -1,50 +1,44 @@
-# React + TypeScript + Vite
+# To-Do App
+A single-page application that allows users to create and manage a list of tasks.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# [Demo](https://yevhen-baiev.github.io/todo-app/)
 
-Currently, two official plugins are available:
+# Technologies used
+- React.js
+- TypeScript
+- JavaScript
+- Fetch, REST API
+- Sass (SCSS)
+- Bulma
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Structure
+App is built using functional components and React Context.
+CSS framework Bulma is used to style the app along with custom SCSS.
 
-## Expanding the ESLint configuration
+# Features & Functionality
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## ToDos
+- User can create a new todo
+- User can delete a todo
+- User can edit a todo
+- User can mark a todo as completed
+- User can mark all ToDos as completed
+- User can delete all completed ToDos
+- All changes are saved in the server
+- `Wait` function was used to simulate server requests to demonstrate the loader.
+- User can filter ToDos by all, active and completed. Filter is saved in URL
+- User can see the number of active ToDos
+- In case of server error, user is notified
 
-- Configure the top-level `parserOptions` property like this:
+# How to run project locally
+- Fork and clone this repository
+- Run `npm install` to install all dependencies
+- Run `npm start` to start the app
+- Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+# Dependencies
+- Node.version: `v20.17.0` or higher
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+# Reflections
+One of the main goals of this project was to learn how to build a single-page application.
+Another challenge was to learn and understand how to work with REST API, different fetch requests such as GET, POST, PATCH and DELETE and errors handling.

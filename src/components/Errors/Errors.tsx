@@ -1,17 +1,18 @@
-import { useContext, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import cn from 'classnames';
 import { ErrorTypes } from '../../types/ErrorTypes';
-import { TodosContext } from '../TodosContext/TodosContext';
+import { TodosContext } from '../TodoContext/TodoContext';
 
 export const Errors: React.FC = () => {
   const { error, setError } = useContext(TodosContext);
-
   const ref = useRef(0);
 
-  if (error !== ErrorTypes.Initial) {
-    window.clearTimeout(ref.current);
-    ref.current = window.setTimeout(() => setError(ErrorTypes.Initial), 3000);
-  }
+  useEffect(() => {
+    if (error !== ErrorTypes.Initial) {
+      window.clearTimeout(ref.current);
+      ref.current = window.setTimeout(() => setError(ErrorTypes.Initial), 3000);
+    }
+  }, [error, setError]);
 
   return (
     <div

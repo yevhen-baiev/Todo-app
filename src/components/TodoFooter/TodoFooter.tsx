@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { TodoFilter } from '../TodoFilter';
-import { TodosContext } from '../TodosContext/TodosContext';
+import { TodosContext } from '../TodoContext/TodoContext';
 
 export const TodoFooter: React.FC = () => {
   const { todos, filterStatus, setFilterStatus, deleteTodo } =
@@ -15,8 +15,10 @@ export const TodoFooter: React.FC = () => {
 
   const hasCompleted = !!(todos.length - activeItems);
 
-  const handleDeleteCompleted = () => {
-    completedIds.forEach(id => deleteTodo(id));
+  const handleDelete = (ids: number[]) => {
+    ids.forEach(element => {
+      deleteTodo(element);
+    });
   };
 
   return (
@@ -33,7 +35,7 @@ export const TodoFooter: React.FC = () => {
         type="button"
         className="todoapp__clear-completed disabled"
         data-cy="ClearCompletedButton"
-        onClick={handleDeleteCompleted}
+        onClick={() => handleDelete(completedIds)}
         disabled={!hasCompleted}
       >
         Clear completed

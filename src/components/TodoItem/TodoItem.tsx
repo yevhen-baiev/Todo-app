@@ -1,7 +1,8 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import { Todo } from '../../types/Todo';
-import { TodosContext } from '../TodosContext';
+import { TodosContext } from '../TodoContext';
+import { ErrorTypes } from '../../types/ErrorTypes';
 
 type Props = {
   todo: Todo;
@@ -14,24 +15,38 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
   const [newTitle, setNewTitle] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditing]);
+  const {
+    deleteTodo,
+    tempTodoIds,
+    updateTodo,
+    setError,
+    isEditingId,
+    setIsEditingId,
+  } = useContext(TodosContext);
 
-  const { deleteTodo, isDisabled, tempTodoIds, updateTodo } =
-    useContext(TodosContext);
+  const onDoubleClick = () => {
+    if (!isEditingId) {
+      setIsEditing(true);
+      setIsEditingId(id);
+    }
+  };
 
   const handleToggleChange = () => {
     const newTodo = { ...todo, completed: !completed };
 
-    updateTodo(newTodo);
+    updateTodo(newTodo).catch(() => setError(ErrorTypes.Update));
   };
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing, setIsEditing]);
 
   const handleOnEscape = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
       setIsEditing(false);
+      setIsEditingId(null);
       setNewTitle(title);
     }
   };
@@ -41,30 +56,40 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
   };
 
   const aditFunc = (str: string) => {
+    setError(ErrorTypes.Initial);
+
     const trimmedTitle = str.trim();
 
     if (!trimmedTitle) {
       deleteTodo(id);
       setIsEditing(false);
       setNewTitle(title);
+      setIsEditingId(null);
 
       return;
     }
 
     if (trimmedTitle === title) {
-      setNewTitle(title);
+      setNewTitle(trimmedTitle);
       setIsEditing(false);
+      setIsEditingId(null);
 
       return;
     }
 
     const todoUpdated = { ...todo, title: trimmedTitle };
 
-    setNewTitle(trimmedTitle);
-
     updateTodo(todoUpdated)
-      .then(() => setIsEditing(false))
-      .catch(() => inputRef.current?.focus());
+      .then(() => {
+        setIsEditing(false);
+        setIsEditingId(null);
+      })
+      .catch(() => {
+        setIsEditing(true);
+        setError(ErrorTypes.Update);
+      });
+
+    setNewTitle(trimmedTitle);
   };
 
   const handleOnBlur = () => {
@@ -109,9 +134,9 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
           <span
             data-cy="TodoTitle"
             className="todo__title"
-            onDoubleClick={() => setIsEditing(true)}
+            onDoubleClick={() => onDoubleClick()}
           >
-            {newTitle || title}
+            {newTitle}
           </span>
 
           <button
@@ -129,7 +154,7 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
       <div
         data-cy="TodoLoader"
         className={cn('modal overlay', {
-          'is-active': isDisabled && tempTodoIds.includes(id),
+          'is-active': tempTodoIds.includes(id),
         })}
       >
         <div className="modal-background has-background-white-ter" />

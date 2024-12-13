@@ -25,6 +25,8 @@ type ContextType = {
   setTempTodoIds: React.Dispatch<React.SetStateAction<number[]>>;
   tempTodo: Todo | null;
   updateTodo: (todo: Todo) => Promise<void>;
+  isEditingId: number | null;
+  setIsEditingId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
 export const TodosContext = React.createContext<ContextType>({
@@ -42,6 +44,8 @@ export const TodosContext = React.createContext<ContextType>({
   setTempTodoIds: () => {},
   tempTodo: null,
   updateTodo: async () => {},
+  isEditingId: null,
+  setIsEditingId: () => {},
 });
 
 export const TodosProvider: React.FC<Props> = ({ children }) => {
@@ -51,6 +55,7 @@ export const TodosProvider: React.FC<Props> = ({ children }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [tempTodoIds, setTempTodoIds] = useState<number[]>([]);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
+  const [isEditingId, setIsEditingId] = useState<number | null>(null);
 
   useEffect(() => {
     client
@@ -60,7 +65,6 @@ export const TodosProvider: React.FC<Props> = ({ children }) => {
   }, []);
 
   const updateTodo = (newTodo: Todo) => {
-    setIsDisabled(true);
     setTempTodoIds(prev => [...prev, newTodo.id]);
 
     return client
@@ -70,12 +74,7 @@ export const TodosProvider: React.FC<Props> = ({ children }) => {
           prev.map(el => (el.id === newTodo.id ? { ...newTodo } : el)),
         );
       })
-      .catch(() => {
-        setError(ErrorTypes.Update);
-        throw new Error();
-      })
       .finally(() => {
-        setIsDisabled(false);
         setTempTodoIds(prev => prev.filter(el => el !== newTodo.id));
       });
   };
@@ -105,19 +104,14 @@ export const TodosProvider: React.FC<Props> = ({ children }) => {
     };
 
     setTempTodo(tTodo);
-    setError(ErrorTypes.Initial);
 
-    setTempTodoIds(prev => [...prev, 0]);
+    setTempTodoIds(prev => [0, ...prev]);
     setIsDisabled(true);
 
     return client
       .createTodo(tTodo)
       .then((todo: Todo) => {
         setTodos(prev => [...prev, todo]);
-      })
-      .catch(() => {
-        setError(ErrorTypes.Add);
-        throw new Error();
       })
       .finally(() => {
         setIsDisabled(false);
@@ -143,6 +137,8 @@ export const TodosProvider: React.FC<Props> = ({ children }) => {
         setTempTodoIds,
         tempTodo,
         updateTodo,
+        isEditingId,
+        setIsEditingId,
       }}
     >
       {children}

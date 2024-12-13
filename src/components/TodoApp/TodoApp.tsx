@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { TodosContext } from '../TodosContext/TodosContext';
+import { TodosContext } from '../TodoContext/TodoContext';
 import { TodoHeader } from '../TodoHeader';
 import { TodoList } from '../TodoList';
 import { TodoFooter } from '../TodoFooter';
